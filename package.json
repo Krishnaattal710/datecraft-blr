@@ -1,0 +1,17 @@
+{
+  "name": "datecraft-blr",
+  "version": "1.0.0",
+  "description": "Luxury date planning service for Bengaluru couples — we plan, you love.",
+  "author": "Krishnaattal710",
+  "license": "MIT",
+  "homepage": "https://Krishnaattal710.github.io/datecraft-blr",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Krishnaattal710/datecraft-blr.git"
+  },
+  "keywords": ["date-planning", "bengaluru", "couples", "romance", "vanilla-js", "whatsapp"],
+  "scripts": {
+    "start": "npx live-server --port=3000 --open=index.html",
+    "deploy": "gh-pages -d ."
+  }
+}
