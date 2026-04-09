@@ -1792,6 +1792,7 @@ footer {
           <div class="form-block"><label class="form-label">Your Name</label><input class="form-input" id="yourName" type="text" placeholder="Rahul Sharma"></div>
           <div class="form-block"><label class="form-label">WhatsApp Number</label><input class="form-input" id="yourPhone" type="tel" placeholder="+91 98765 43210"></div>
         </div>
+        <div class="form-block"><label class="form-label">Email <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--dim)">(optional — for confirmation)</span></label><input class="form-input" id="yourEmail" type="email" placeholder="you@email.com"></div>
         <div class="form-block"><label class="form-label">Occasion</label>
           <select class="form-select" id="occasion">
             <option value="">Select the occasion...</option>
@@ -2412,17 +2413,24 @@ function sendMsgWA() {
   window.open('https://wa.me/?text='+encodeURIComponent(lastGeneratedMsg), '_blank');
 }
 
+// ── BACKEND CONFIG ──
+// Update DATECRAFT_API after deploying datecraft-backend to Vercel
+const DATECRAFT_API = 'https://datecraft-backend.vercel.app';
+
 // ── SUBMIT ──
-let currentWaMsg = '';
-function submitPlan() {
+let currentWaMsg   = '';
+let currentBookingRef = '';
+
+async function submitPlan() {
   const yourName    = document.getElementById('yourName').value.trim();
   const yourPhone   = document.getElementById('yourPhone').value.trim();
+  const yourEmail   = document.getElementById('yourEmail')?.value.trim() || '';
   const partnerName = document.getElementById('partnerName').value.trim();
   const occasion    = document.getElementById('occasion').value;
   const date        = document.getElementById('dateOfPlan').value;
   const food        = document.getElementById('foodPref').value;
   const note        = document.getElementById('specialNote').value.trim();
-  const vibes       = [...document.querySelectorAll('#builder .vibe-chip.selected')].map(v=>v.textContent.trim()).join(', ');
+  const vibes       = [...document.querySelectorAll('#builder .vibe-chip.selected')].map(v => v.textContent.trim());
 
   if(!yourName)    { shake('yourName');    showToast('Please enter your name \uD83D\uDC8C'); return; }
   if(!yourPhone)   { shake('yourPhone');   showToast('We need your WhatsApp number \uD83D\uDCF1'); return; }
@@ -2430,41 +2438,94 @@ function submitPlan() {
   if(!occasion)    { showToast("What's the occasion? \uD83C\uDF89"); return; }
   if(!date)        { showToast('Pick a date for the plan \uD83D\uDCC5'); return; }
 
-  const fmtDate = new Date(date).toLocaleDateString('en-IN',{weekday:'long',month:'long',day:'numeric'});
+  // Disable submit button
+  const btn = document.querySelector('.form-submit');
+  const origTxt = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '\u23F3 Sending your booking...';
+
+  const fmtDate = new Date(date).toLocaleDateString('en-IN', { weekday:'long', month:'long', day:'numeric' });
   const plan = PLAN_DATA[currentPlanName];
 
-  document.getElementById('successPlan').textContent = partnerName+"\u2019s "+currentPlanName+" Date \u2014 "+fmtDate;
+  try {
+    // ── Try real API first ──
+    const res = await fetch(DATECRAFT_API + '/api/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        your_name:    yourName,
+        your_phone:   yourPhone,
+        your_email:   yourEmail,
+        partner_name: partnerName,
+        occasion,
+        date_of_plan: date,
+        plan:         currentPlanName,
+        food_pref:    food,
+        vibes,
+        special_note: note,
+      }),
+    });
 
-  currentWaMsg =
-    "Hi DateCraft! \uD83C\uDF39 Booking request:\n\n" +
-    "\uD83D\uDC64 Name: "+yourName+"\n\uD83D\uDCF1 WhatsApp: "+yourPhone+
-    "\n\uD83C\uDF89 Occasion: "+occasion+"\n\uD83D\uDCC5 Date: "+fmtDate+
-    "\n\uD83D\uDCB0 Plan: "+currentPlanName+" ("+plan.price+")"+
-    "\n\uD83D\uDC97 Partner: "+partnerName+
-    (vibes?"\n\u2728 Vibe: "+vibes:"")+
-    (food?"\n\uD83C\uDF7D Food: "+food:"")+
-    (note?"\n\uD83D\uDCDD Notes: "+note:"")+
-    "\n\nPlease confirm! \uD83D\uDE4F";
+    const data = await res.json();
 
-  document.getElementById('waSuccessMsg').textContent = currentWaMsg;
-  document.getElementById('successOv').classList.add('show');
-  document.body.style.overflow = 'hidden';
+    if (res.ok && data.booking_ref) {
+      currentBookingRef = data.booking_ref;
 
-  // Update progress
-  document.getElementById('bpStep3').classList.add('done'); document.getElementById('bpStep3').querySelector('.bp-dot').textContent='\u2713';
+      // Show success with booking reference
+      document.getElementById('successPlan').textContent = partnerName + '\u2019s ' + currentPlanName + ' Date \u2014 ' + fmtDate;
+      document.getElementById('waSuccessMsg').textContent =
+        'Booking ref: ' + data.booking_ref + '\n\nWe\u2019ll WhatsApp you within 24 hours to confirm and send your payment link. \uD83C\uDF39';
+
+      // Update WA button to share booking ref
+      currentWaMsg = 'Hi DateCraft! \uD83C\uDF39 I just submitted a booking.\n\nRef: ' + data.booking_ref + '\nName: ' + yourName + '\nPlan: ' + currentPlanName + ' (' + plan.price + ')\n\nPlease confirm! \uD83D\uDE4F';
+
+      document.getElementById('successOv').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    } else {
+      throw new Error(data.error || 'Booking failed');
+    }
+
+  } catch (err) {
+    // ── Fallback: WhatsApp-only mode ──
+    console.warn('API unavailable, falling back to WhatsApp:', err.message);
+
+    currentWaMsg =
+      'Hi DateCraft! \uD83C\uDF39 Booking request:\n\n' +
+      '\uD83D\uDC64 Name: ' + yourName + '\n\uD83D\uDCF1 WhatsApp: ' + yourPhone +
+      '\n\uD83C\uDF89 Occasion: ' + occasion + '\n\uD83D\uDCC5 Date: ' + fmtDate +
+      '\n\uD83D\uDCB0 Plan: ' + currentPlanName + ' (' + plan.price + ')' +
+      '\n\uD83D\uDC97 Partner: ' + partnerName +
+      (vibes.length ? '\n\u2728 Vibe: ' + vibes.join(', ') : '') +
+      (food ? '\n\uD83C\uDF7D Food: ' + food : '') +
+      (note ? '\n\uD83D\uDCDD Notes: ' + note : '') +
+      '\n\nPlease confirm! \uD83D\uDE4F';
+
+    document.getElementById('successPlan').textContent = partnerName + '\u2019s ' + currentPlanName + ' Date \u2014 ' + fmtDate;
+    document.getElementById('waSuccessMsg').textContent = currentWaMsg;
+    document.getElementById('successOv').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = origTxt;
+  }
+
+  // Update progress tracker
+  document.getElementById('bpStep3').classList.add('done');
+  document.getElementById('bpStep3').querySelector('.bp-dot').textContent = '\u2713';
   document.getElementById('bpStep4').classList.add('active');
 
-  for(let i=0; i!==30; i++) setTimeout(spawnPetal, i*70);
+  for (let i = 0; i !== 30; i++) setTimeout(spawnPetal, i * 70);
 }
 
 function sendSuccessWA() {
-  window.open('https://wa.me/919999999999?text='+encodeURIComponent(currentWaMsg),'_blank');
+  window.open('https://wa.me/919999999999?text=' + encodeURIComponent(currentWaMsg), '_blank');
   document.getElementById('successOv').classList.remove('show');
   document.body.style.overflow = '';
   showToast('\u2705 WhatsApp opened \u2014 just hit Send!');
-  // Mark complete
-  document.getElementById('bpStep4').classList.add('done'); document.getElementById('bpStep4').querySelector('.bp-dot').textContent='\u2713';
+  document.getElementById('bpStep4').classList.add('done');
+  document.getElementById('bpStep4').querySelector('.bp-dot').textContent = '\u2713';
 }
+
 
 // ── SHAKE ──
 function shake(id) {
