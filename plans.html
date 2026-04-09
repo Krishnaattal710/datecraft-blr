@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Plans & Packages — DateCraft</title>
+<meta name="description" content="Compare Spark, Romance, and Fairytale date packages. Choose the perfect plan for your partner.">
+<link rel="stylesheet" href="shared.css">
+<style>
+.plans-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.plan-card { background:var(--bg2); border:1px solid var(--bdr); border-radius:var(--radius-lg); overflow:hidden; transition:all 0.32s; }
+.plan-card:hover { transform:translateY(-8px); border-color:var(--bdr2); box-shadow:var(--shadow),var(--glow); }
+.plan-card.featured { border-color:rgba(232,71,106,0.4); background:linear-gradient(160deg,#1a0e2a,#130d20); box-shadow:0 0 0 1px rgba(232,71,106,0.18),var(--glow); }
+.plan-card.featured::before { content:''; position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--rose),var(--gold2),var(--rose)); }
+.plan-card { position:relative; }
+.plan-pop { position:absolute;top:18px;right:18px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 12px;border-radius:50px;background:var(--rose);color:#fff; }
+.plan-header { padding:36px 32px 24px; }
+.plan-tier { font-family:'Dancing Script',cursive;font-size:17px;color:var(--rose2);margin-bottom:7px; }
+.plan-name { font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;margin-bottom:10px; }
+.plan-price { display:flex;align-items:baseline;gap:4px;margin-bottom:14px; }
+.plan-price .sym { font-size:20px;font-weight:500;color:var(--gold);font-family:'Cormorant Garamond',serif; }
+.plan-price .amt { font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:700;color:var(--gold2);line-height:1; }
+.plan-tagline { font-size:13px;color:var(--muted);line-height:1.6; }
+.plan-div { height:1px;background:var(--bdr);margin:0 32px; }
+.plan-body { padding:26px 32px 32px; }
+.plan-items-label { font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:14px; }
+.plan-items { display:flex;flex-direction:column;gap:9px;margin-bottom:28px; }
+.plan-item { display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--muted);line-height:1.5; }
+.plan-item-dot { width:24px;height:24px;border-radius:8px;background:rgba(232,71,106,0.1);border:1px solid rgba(232,71,106,0.18);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0; }
+.plan-item b { color:var(--txt);font-weight:600; }
+
+/* Comparison */
+.compare-wrap { overflow-x:auto; border-radius:var(--radius-lg); border:1px solid var(--bdr); }
+.ctable { width:100%; border-collapse:collapse; }
+.ctable th { padding:22px 18px; text-align:center; font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:700; }
+.ctable th:first-child { text-align:left; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--dim); }
+.th-s{background:rgba(201,151,90,0.08);color:var(--gold2);}
+.th-r{background:rgba(232,71,106,0.1);color:var(--rose2);}
+.th-f{background:rgba(162,89,255,0.1);color:#c4a0ff;}
+.ctable td { padding:14px 18px; border-top:1px solid var(--bdr); font-size:13px; color:var(--muted); text-align:center; }
+.ctable td:first-child { text-align:left; color:var(--txt); font-weight:500; }
+.ctable tr:hover td { background:rgba(255,255,255,0.015); }
+.ck { color:var(--rose); font-size:15px; }
+.cx { color:var(--dim); }
+.cp { color:var(--gold); font-size:11px; font-weight:700; }
+.ctable .cta-row td { padding:18px; }
+.ctable .cta-row button { width:100%;padding:10px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.22s; }
+.ctable .cta-row td:nth-child(2) button{background:rgba(201,151,90,0.1);color:var(--gold2);border:1px solid rgba(201,151,90,0.25);}
+.ctable .cta-row td:nth-child(3) button{background:var(--rose);color:#fff;}
+.ctable .cta-row td:nth-child(4) button{background:rgba(162,89,255,0.1);color:#c4a0ff;border:1px solid rgba(162,89,255,0.25);}
+@media(max-width:1024px){.plans-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+<nav class="nav">
+  <a class="nav-logo" href="index.html">DateCraft</a>
+  <div class="nav-links">
+    <a class="nav-link" href="index.html">Home</a>
+    <a class="nav-link" href="plans.html">Plans</a>
+    <a class="nav-link" href="quiz.html">Quiz</a>
+    <a class="nav-link" href="venues.html">Venues</a>
+    <a class="nav-link" href="card-writer.html">Card Writer</a>
+    <a class="nav-link" href="book.html">Book Now</a>
+  </div>
+  <a class="nav-cta btn btn-primary" href="book.html">Plan Their Surprise 💌</a>
+  <button class="hamburger" onclick="toggleMobMenu()"><span></span><span></span><span></span></button>
+</nav>
+<div class="mob-menu" id="mobMenu">
+  <button class="mob-close" onclick="closeMobMenu()">×</button>
+  <a href="index.html" onclick="closeMobMenu()">Home</a>
+  <a href="plans.html" onclick="closeMobMenu()">Plans</a>
+  <a href="quiz.html" onclick="closeMobMenu()">Date Quiz</a>
+  <a href="venues.html" onclick="closeMobMenu()">Venues &amp; Gifts</a>
+  <a href="card-writer.html" onclick="closeMobMenu()">Card Writer</a>
+  <a href="book.html" onclick="closeMobMenu()" style="color:var(--rose)">Book Now 💌</a>
+</div>
+<div class="page">
+
+  <div class="page-hero reveal">
+    <span class="page-eyebrow">Our Packages</span>
+    <h1 class="page-title">Every love story<br><em>has its own scale</em></h1>
+    <p class="page-sub">Three plans, each designed for a different level of grandeur. Every one of them unforgettable.</p>
+    <div style="display:flex;gap:12px;margin-top:28px;flex-wrap:wrap">
+      <a href="quiz.html" class="btn btn-ghost">Not sure? Take the quiz ✦</a>
+      <a href="book.html" class="btn btn-primary">Book a Plan 💌</a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="plans-grid">
+      <div class="plan-card reveal" id="spark">
+        <div class="plan-header">
+          <div class="plan-tier">The Beginning</div>
+          <div class="plan-name">Spark</div>
+          <div class="plan-price"><span class="sym">₹</span><span class="amt">3,000</span></div>
+          <div class="plan-tagline">A perfect first move. Intimate, thoughtful, and exactly right for a cozy date.</div>
+        </div>
+        <div class="plan-div"></div>
+        <div class="plan-body">
+          <div class="plan-items-label">What's included</div>
+          <div class="plan-items">
+            <div class="plan-item"><div class="plan-item-dot">☕</div><div><b>Café reservation</b> — curated ambience, private table</div></div>
+            <div class="plan-item"><div class="plan-item-dot">🌹</div><div><b>Bouquet delivery</b> — fresh flowers waiting at the table</div></div>
+            <div class="plan-item"><div class="plan-item-dot">🎵</div><div><b>Custom playlist</b> — 20 songs picked for your vibe</div></div>
+            <div class="plan-item"><div class="plan-item-dot">🍫</div><div><b>Dessert surprise</b> — chocolate, macaron, or waffle box</div></div>
+            <div class="plan-item"><div class="plan-item-dot">📋</div><div><b>Date timeline</b> — hour by hour plan sent to you</div></div>
+          </div>
+          <a href="book.html?plan=Spark" class="btn btn-ghost btn-full">Choose Spark ✦</a>
+        </div>
+      </div>
+
+      <div class="plan-card featured reveal" id="romance">
+        <div class="plan-pop">Most Loved</div>
+        <div class="plan-header">
+          <div class="plan-tier">The Classic</div>
+          <div class="plan-name">Romance</div>
+          <div class="plan-price"><span class="sym">₹</span><span class="amt">6,000</span></div>
+          <div class="plan-tagline">A full evening of curated magic. Dinner, an activity, gifts, and memories.</div>
+        </div>
+        <div class="plan-div"></div>
+        <div class="plan-body">
+          <div class="plan-items-label">What's included</div>
+          <div class="plan-items">
+            <div class="plan-item"><div class="plan-item-dot">🍽️</div><div><b>Premium dinner reservation</b> — candlelit, private</div></div>
+            <div class="plan-item"><div class="plan-item-dot">🎁</div><div><b>Gift hamper</b> — personalised to your partner</div></div>
+            <div class="plan-item"><div class="plan-item-dot">🌹</div><div><b>Rose arrangement + card</b> — handwritten by us</div></div>
+            <div class="plan-item"><div class="plan-item-dot">🎭</div><div><b>Activity pairing</b> — pottery, painting, stargazing</div></div>
+            <div class="plan-item"><div class="plan-item-dot">📸</div><div><b>Candid photographer</b> — 1 hour, 30 edited shots</div></div>
+            <div class="plan-item"><div class="plan-item-dot">🎵</div><div><b>Full night playlist + setup</b></div></div>
+          </div>
+          <a href="book.html?plan=Romance" class="btn btn-primary btn-full">Choose Romance 💫</a>
+        </div>
+      </div>
+
+      <div class="plan-card reveal" id="fairytale">
+        <div class="plan-header">
+          <div class="plan-tier">The Grand</div>
+          <div class="plan-name">Fairytale</div>
+          <div class="plan-price"><span class="sym">₹</span><span class="amt">9,000</span></div>
+          <div class="plan-tagline">A full-day affair. A story so cinematic they'll tell it for years.</div>
+        </div>
+        <div class="plan-div"></div>
+        <div class="plan-body">
+          <div class="plan-items-label">What's included</div>
+          <div class="plan-items">
+            <div class="plan-item"><div class="plan-item-dot">🌅</div><div><b>Full-day itinerary</b> — morning to midnight</div></div>
+            <div class="plan-item"><div class="plan-item-dot">🍾</div><div><b>Luxury venue + décor</b> — balloons, fairy lights, rose petals</div></div>
+            <div class="plan-item"><div class="plan-item-dot">🎁</div><div><b>Premium gift box</b> — jewellery, perfume, keepsake</div></div>
+            <div class="plan-item"><div class="plan-item-dot">📸</div><div><b>3-hour photographer</b> — 80+ edited photos + reel</div></div>
+            <div class="plan-item"><div class="plan-item-dot">🚗</div><div><b>Cab arrangement</b> — both-way, decorated</div></div>
+            <div class="plan-item"><div class="plan-item-dot">🎀</div><div><b>Surprise element</b> — flash mob, sky lantern, or serenade</div></div>
+            <div class="plan-item"><div class="plan-item-dot">📖</div><div><b>Memory book</b> — printed after the date</div></div>
+          </div>
+          <a href="book.html?plan=Fairytale" class="btn btn-ghost btn-full">Choose Fairytale 👑</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARISON -->
+  <div class="section">
+    <div class="text-center mb-32 reveal">
+      <span class="section-label">Side by side</span>
+      <h2 class="section-title">Compare every<br><em>plan in detail</em></h2>
+    </div>
+    <div class="compare-wrap reveal">
+      <table class="ctable">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="th-s">Spark<br><small style="font-size:13px;font-weight:400;font-family:'DM Sans',sans-serif">₹3,000</small></th>
+            <th class="th-r">Romance ⭐<br><small style="font-size:13px;font-weight:400;font-family:'DM Sans',sans-serif">₹6,000</small></th>
+            <th class="th-f">Fairytale<br><small style="font-size:13px;font-weight:400;font-family:'DM Sans',sans-serif">₹9,000</small></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Venue Booking</td><td class="ck">✓</td><td class="ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Fresh Bouquet</td><td class="ck">✓</td><td class="ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Custom Playlist</td><td class="ck">✓</td><td class="ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Dessert Surprise</td><td class="ck">✓</td><td class="ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Date Timeline</td><td class="ck">✓</td><td class="ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>WhatsApp Support</td><td class="ck">✓</td><td class="ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Gift Hamper</td><td class="cx">—</td><td class="ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Premium Dinner</td><td class="cx">—</td><td class="ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Activity Pairing</td><td class="cx">—</td><td class="ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Candid Photographer</td><td class="cx">—</td><td class="cp">1hr · 30 shots</td><td class="cp">3hrs · 80+ shots + reel</td></tr>
+          <tr><td>Venue Décor Setup</td><td class="cx">—</td><td class="cx">—</td><td class="ck">✓</td></tr>
+          <tr><td>Cab Arrangement</td><td class="cx">—</td><td class="cx">—</td><td class="ck">✓</td></tr>
+          <tr><td>Surprise Element</td><td class="cx">—</td><td class="cx">—</td><td class="ck">✓</td></tr>
+          <tr><td>Printed Memory Book</td><td class="cx">—</td><td class="cx">—</td><td class="ck">✓</td></tr>
+          <tr class="cta-row">
+            <td></td>
+            <td><button onclick="location.href='book.html?plan=Spark'">Choose Spark</button></td>
+            <td><button onclick="location.href='book.html?plan=Romance'">Choose Romance</button></td>
+            <td><button onclick="location.href='book.html?plan=Fairytale'">Choose Fairytale</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+<footer class="footer">
+  <a href="index.html" class="footer-logo">DateCraft</a>
+  <div class="footer-links">
+    <a href="plans.html">Plans</a>
+    <a href="quiz.html">Quiz</a>
+    <a href="venues.html">Venues</a>
+    <a href="card-writer.html">Card Writer</a>
+    <a href="book.html">Book Now</a>
+    <a href="status.html">Track Booking</a>
+  </div>
+  <div class="footer-copy">© 2025 DateCraft · Made with 💗 in Bengaluru</div>
+</footer>
+</div>
+<a href="https://wa.me/919999999999?text=Hi%20DateCraft!" target="_blank" class="wa-float">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  <div class="wa-tooltip">Chat with us</div>
+</a>
+<script src="shared.js"></script>
+
+</body>
+</html>

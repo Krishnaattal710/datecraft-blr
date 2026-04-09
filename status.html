@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DateCraft — Your Booking</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080610;--bg2:#0d0b1e;--rose:#e8476a;--gold:#c9975a;--gold2:#f0c080;--txt:#f2f0ff;--muted:rgba(242,240,255,0.5);--dim:rgba(242,240,255,0.22);--bdr:rgba(242,240,255,0.08);--green:#22c55e;--orange:#f59e0b;--blue:#3b82f6;--purple:#a259ff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.wrap{max-width:520px;width:100%;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;font-style:italic;color:var(--rose);text-align:center;margin-bottom:28px;}
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:24px;overflow:hidden;}
+.card-header{background:linear-gradient(135deg,#1a0a18,#2d0f28);padding:32px;text-align:center;}
+.card-header-emoji{font-size:48px;margin-bottom:12px;}
+.card-header h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;font-style:italic;margin-bottom:4px;}
+.card-header p{font-size:13px;color:var(--muted);}
+.card-body{padding:28px;}
+
+/* STATUS TIMELINE */
+.status-timeline{display:flex;flex-direction:column;gap:0;margin-bottom:28px;}
+.st-item{display:flex;align-items:flex-start;gap:14px;padding:16px 0;position:relative;}
+.st-item:not(:last-child)::after{content:'';position:absolute;left:14px;top:44px;bottom:-12px;width:2px;background:var(--bdr);z-index:0;}
+.st-item.done::after{background:var(--rose);}
+.st-dot{width:30px;height:30px;border-radius:50%;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:var(--bg);position:relative;z-index:1;transition:all 0.4s;}
+.st-item.done .st-dot{background:var(--rose);border-color:var(--rose);color:#fff;box-shadow:0 0 16px rgba(232,71,106,0.4);}
+.st-item.active .st-dot{border-color:var(--rose);background:rgba(232,71,106,0.12);color:var(--rose);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,71,106,0.4)}50%{box-shadow:0 0 0 8px rgba(232,71,106,0)}}
+.st-info{padding-top:4px;}
+.st-title{font-size:15px;font-weight:600;color:var(--txt);}
+.st-item:not(.done):not(.active) .st-title{color:var(--dim);}
+.st-desc{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5;}
+
+/* BOOKING DETAILS */
+.details-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.detail-box{background:rgba(255,255,255,0.03);border:1px solid var(--bdr);border-radius:12px;padding:12px 14px;}
+.detail-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:4px;}
+.detail-val{font-size:14px;font-weight:600;color:var(--txt);}
+.detail-val.accent{color:var(--gold2);}
+
+/* CTA */
+.cta-row{display:flex;flex-direction:column;gap:10px;}
+.cta-btn{width:100%;padding:14px;border-radius:12px;border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s;text-decoration:none;text-align:center;display:block;}
+.cta-btn.primary{background:var(--rose);color:#fff;box-shadow:0 4px 20px rgba(232,71,106,0.35);}
+.cta-btn.primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(232,71,106,0.45);}
+.cta-btn.wa{background:#25d366;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;}
+.cta-btn.wa:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,211,102,0.4);}
+.cta-btn.ghost{background:transparent;border:1px solid var(--bdr);color:var(--muted);}
+.cta-btn.ghost:hover{border-color:var(--rose);color:var(--rose);}
+
+/* Ref pill */
+.ref-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid var(--bdr);border-radius:50px;padding:5px 14px;font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--muted);margin-bottom:20px;}
+
+.spinner{width:36px;height:36px;border:3px solid var(--bdr);border-top-color:var(--rose);border-radius:50%;animation:spin 0.8s linear infinite;margin:40px auto;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.err{text-align:center;padding:40px 20px;color:var(--muted);}
+.lookup-form{background:var(--bg2);border:1px solid var(--bdr);border-radius:24px;padding:36px;text-align:center;}
+.lookup-form h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;font-style:italic;margin-bottom:8px;}
+.lookup-form p{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.lookup-input{width:100%;padding:14px 18px;border-radius:12px;border:1px solid var(--bdr);background:rgba(255,255,255,0.04);color:var(--txt);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;margin-bottom:12px;transition:border-color 0.3s;text-align:center;letter-spacing:3px;text-transform:uppercase;}
+.lookup-input:focus{border-color:var(--rose);}
+.lookup-btn{width:100%;padding:14px;border-radius:12px;border:none;background:var(--rose);color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">💌 DateCraft</div>
+  <div id="content"><div class="spinner"></div></div>
+</div>
+
+<script>
+const API_BASE = 'https://your-app.vercel.app'; // ← UPDATE after Vercel deploy
+
+const STATUS_STEPS = [
+  { key:'received',        label:'Booking Received',     desc:'We got your request and are reviewing it.' },
+  { key:'confirmed',       label:'Host Confirmed',        desc:'Your date has been confirmed! Payment link sent to your WhatsApp.' },
+  { key:'payment_pending', label:'Payment Pending',       desc:'Complete the 50% advance payment via the link sent to your WhatsApp.' },
+  { key:'paid',            label:'Payment Confirmed',     desc:'You\'re all set! We\'ll send venue details 48hrs before the date.' },
+  { key:'in_progress',     label:'Date in Progress',      desc:'Your date is happening right now. Enjoy every moment! 🌹' },
+  { key:'completed',       label:'Date Complete',         desc:'We hope it was everything you dreamed of. 💌' },
+];
+
+function getActiveStep(status) {
+  const map = { pending:0, confirmed:1, payment_pending:2, paid:3, in_progress:4, completed:5 };
+  return map[status] ?? 0;
+}
+
+async function loadBooking(id) {
+  document.getElementById('content').innerHTML = '<div class="spinner"></div>';
+  try {
+    const res = await fetch(`${API_BASE}/api/bookings/${id}`);
+    if (!res.ok) throw new Error();
+    const b = await res.json();
+    renderBooking(b);
+  } catch {
+    document.getElementById('content').innerHTML = `<div class="err"><p style="font-size:40px;margin-bottom:16px">😕</p><p style="font-size:16px;font-weight:600;margin-bottom:8px">Booking not found</p><p>Double-check your reference number or <a href="https://wa.me/919999999999" style="color:var(--rose)">message us on WhatsApp</a>.</p></div>`;
+  }
+}
+
+function renderBooking(b) {
+  const activeStep = getActiveStep(b.status);
+  const fmtDate = new Date(b.date_of_plan).toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const planEmojis = { Spark:'☕', Romance:'🌹', Fairytale:'✨' };
+
+  const stepsHtml = STATUS_STEPS.map((s, i) => {
+    const isDone   = i < activeStep;
+    const isActive = i === activeStep;
+    return `<div class="st-item ${isDone?'done':''} ${isActive?'active':''}">
+      <div class="st-dot">${isDone ? '✓' : i + 1}</div>
+      <div class="st-info">
+        <div class="st-title">${s.label}</div>
+        <div class="st-desc">${isActive || isDone ? s.desc : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const ctaHtml = b.status === 'payment_pending'
+    ? `<a href="${API_BASE}/pay/${b.id}" class="cta-btn primary">💳 Complete Payment →</a>`
+    : '';
+
+  document.getElementById('content').innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-emoji">${planEmojis[b.plan] || '🌹'}</div>
+        <h2>${b.partner_name}'s ${b.plan} Date</h2>
+        <p>${fmtDate}</p>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;justify-content:center;margin-bottom:20px">
+          <div class="ref-pill">📋 Ref: ${b.ref || b.id?.slice(0,8).toUpperCase()}</div>
+        </div>
+
+        <div class="details-grid">
+          <div class="detail-box"><div class="detail-label">Plan</div><div class="detail-val">${b.plan}</div></div>
+          <div class="detail-box"><div class="detail-label">Date</div><div class="detail-val">${new Date(b.date_of_plan).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</div></div>
+          <div class="detail-box"><div class="detail-label">Total</div><div class="detail-val accent">₹${b.plan_price_inr?.toLocaleString('en-IN')}</div></div>
+          <div class="detail-box"><div class="detail-label">Paid</div><div class="detail-val accent">₹${(b.amount_paid_inr||0).toLocaleString('en-IN')}</div></div>
+          ${b.assigned_venue ? `<div class="detail-box" style="grid-column:1/-1"><div class="detail-label">Venue</div><div class="detail-val">${b.assigned_venue}</div></div>` : ''}
+        </div>
+
+        <div class="status-timeline">${stepsHtml}</div>
+
+        <div class="cta-row">
+          ${ctaHtml}
+          <a href="https://wa.me/919999999999?text=Hi! My booking ref is ${b.ref || b.id?.slice(0,8).toUpperCase()}" target="_blank" class="cta-btn wa">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Chat with us
+          </a>
+          <a href="/" class="cta-btn ghost">← Back to DateCraft</a>
+        </div>
+      </div>
+    </div>`;
+}
+
+// Show lookup form if no ID in URL
+const urlId = new URLSearchParams(window.location.search).get('id')
+           || window.location.pathname.split('/').filter(Boolean).pop();
+
+if (urlId && urlId.length > 6) {
+  loadBooking(urlId);
+} else {
+  document.getElementById('content').innerHTML = `
+    <div class="lookup-form">
+      <h2>Track Your Booking</h2>
+      <p>Enter your booking reference number to check the status of your date plan.</p>
+      <input class="lookup-input" id="refInput" type="text" placeholder="e.g. A1B2C3D4" maxlength="8" onkeydown="if(event.key==='Enter')lookup()">
+      <button class="lookup-btn" onclick="lookup()">Check Status 🌹</button>
+    </div>`;
+}
+
+async function lookup() {
+  const ref = document.getElementById('refInput')?.value.trim().toUpperCase();
+  if (!ref || ref.length < 6) { alert('Please enter your booking reference'); return; }
+  // Try fetching by ref (need backend to support this)
+  // For now redirect to status page
+  window.location.href = `/status?ref=${ref}`;
+}
+</script>
+</body>
+</html>

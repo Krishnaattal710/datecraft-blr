@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Venues & Gifts — DateCraft</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.venues-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.venue-card { background:var(--bg2); border:1px solid var(--bdr); border-radius:var(--radius-lg); overflow:hidden; transition:all 0.3s; cursor:default; }
+.venue-card:hover { transform:translateY(-6px); border-color:var(--bdr2); box-shadow:var(--shadow),var(--glow); }
+.venue-img { height:170px; display:flex; align-items:center; justify-content:center; font-size:56px; position:relative; }
+.venue-overlay { position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,0.7)); }
+.venue-plan-tag { position:absolute;top:12px;left:12px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 12px;border-radius:50px;backdrop-filter:blur(8px); }
+.venue-body { padding:18px 20px; }
+.venue-name { font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;margin-bottom:4px; }
+.venue-area { font-size:12px;color:var(--muted);margin-bottom:11px; }
+.venue-tags { display:flex;gap:6px;flex-wrap:wrap; }
+.venue-tag { font-size:10px;font-weight:600;padding:3px 10px;border-radius:50px;background:var(--surf);border:1px solid var(--bdr);color:var(--muted); }
+
+.gifts-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; }
+.gift-card { background:var(--bg2); border:1px solid var(--bdr); border-radius:var(--radius); padding:24px 18px; text-align:center; transition:all 0.28s; position:relative; overflow:hidden; }
+.gift-card::before { content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(232,71,106,0.05),transparent);opacity:0;transition:opacity 0.3s; }
+.gift-card:hover { border-color:var(--bdr2); transform:translateY(-4px); box-shadow:var(--glow); }
+.gift-card:hover::before { opacity:1; }
+.gift-emoji { font-size:36px; margin-bottom:12px; display:block; }
+.gift-name { font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;margin-bottom:6px; }
+.gift-plan { font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--rose2); }
+
+.timeline { position:relative;padding-left:38px;max-width:540px; }
+.timeline::before { content:'';position:absolute;left:10px;top:8px;bottom:8px;width:2px;background:linear-gradient(to bottom,var(--rose),var(--gold),var(--rose));opacity:0.3; }
+.tl-item { position:relative;margin-bottom:36px;opacity:0;transform:translateX(-16px);transition:all 0.5s ease; }
+.tl-item.visible { opacity:1;transform:translateX(0); }
+.tl-dot { position:absolute;left:-32px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--rose);box-shadow:0 0 14px rgba(232,71,106,0.5);border:2px solid var(--bg); }
+.tl-time { font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:5px; }
+.tl-title { font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:5px; }
+.tl-desc { font-size:13px;color:var(--muted);line-height:1.65; }
+
+.faq-list { display:flex;flex-direction:column;gap:0;max-width:700px;margin:0 auto; }
+.faq-item { border-bottom:1px solid var(--bdr); }
+.faq-q { display:flex;align-items:center;justify-content:space-between;padding:20px 0;cursor:pointer;font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:var(--txt);transition:color 0.22s; }
+.faq-q:hover { color:var(--rose2); }
+.faq-icon { width:26px;height:26px;border-radius:50%;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;transition:all 0.3s;color:var(--muted); }
+.faq-item.open .faq-icon { transform:rotate(45deg);border-color:var(--rose);color:var(--rose); }
+.faq-a { font-size:14px;color:var(--muted);line-height:1.75;max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s; }
+.faq-item.open .faq-a { max-height:220px;padding-bottom:18px; }
+
+@media(max-width:1024px){.venues-grid{grid-template-columns:1fr 1fr;} .gifts-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:640px){.venues-grid{grid-template-columns:1fr;} .gifts-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<div class="orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+
+<nav class="nav">
+  <a class="nav-logo" href="index.html">DateCraft</a>
+  <div class="nav-links">
+    <a class="nav-link" href="index.html">Home</a>
+    <a class="nav-link" href="plans.html">Plans</a>
+    <a class="nav-link" href="quiz.html">Quiz</a>
+    <a class="nav-link active" href="venues.html">Venues</a>
+    <a class="nav-link" href="card-writer.html">Card Writer</a>
+    <a class="nav-link" href="book.html">Book Now</a>
+  </div>
+  <a class="nav-cta btn btn-primary" href="book.html">Plan Their Surprise 💌</a>
+  <button class="hamburger" onclick="toggleMobMenu()"><span></span><span></span><span></span></button>
+</nav>
+<div class="mob-menu" id="mobMenu">
+  <button class="mob-close" onclick="closeMobMenu()">×</button>
+  <a href="index.html" onclick="closeMobMenu()">Home</a>
+  <a href="plans.html" onclick="closeMobMenu()">Plans</a>
+  <a href="quiz.html" onclick="closeMobMenu()">Quiz</a>
+  <a href="venues.html" onclick="closeMobMenu()">Venues</a>
+  <a href="card-writer.html" onclick="closeMobMenu()">Card Writer</a>
+  <a href="book.html" onclick="closeMobMenu()" style="color:var(--rose)">Book Now 💌</a>
+</div>
+
+<div class="page">
+  <div class="page-hero reveal">
+    <span class="page-eyebrow">Where love happens</span>
+    <h1 class="page-title">Our favourite spots &amp;<br><em>the gifts we curate</em></h1>
+    <p class="page-sub">Every venue is pre-visited, pre-approved, and set up with your date in mind. Every gift chosen with intention.</p>
+  </div>
+
+  <!-- VENUES -->
+  <div class="section">
+    <span class="section-label">Bengaluru venues</span>
+    <h2 class="section-title mb-32"><em>Handpicked</em> for every vibe</h2>
+    <div class="venues-grid">
+      <div class="venue-card reveal">
+        <div class="venue-img" style="background:linear-gradient(135deg,#1a0a18,#2d0f28)">🕯️<div class="venue-overlay"></div><div class="venue-plan-tag" style="background:rgba(232,71,106,0.7);color:#fff">Spark · Romance</div></div>
+        <div class="venue-body"><div class="venue-name">The Permit Room</div><div class="venue-area">📍 Indiranagar</div><div class="venue-tags"><span class="venue-tag">Candlelit</span><span class="venue-tag">Cocktails</span><span class="venue-tag">Intimate</span></div></div>
+      </div>
+      <div class="venue-card reveal">
+        <div class="venue-img" style="background:linear-gradient(135deg,#0d1a0a,#1a2d0f)">🌿<div class="venue-overlay"></div><div class="venue-plan-tag" style="background:rgba(201,151,90,0.8);color:#000">All Plans</div></div>
+        <div class="venue-body"><div class="venue-name">Café Dyu Ani</div><div class="venue-area">📍 Koramangala</div><div class="venue-tags"><span class="venue-tag">Garden</span><span class="venue-tag">Artsy</span><span class="venue-tag">Cozy</span></div></div>
+      </div>
+      <div class="venue-card reveal">
+        <div class="venue-img" style="background:linear-gradient(135deg,#0a0a1a,#0f0f2d)">🌃<div class="venue-overlay"></div><div class="venue-plan-tag" style="background:rgba(162,89,255,0.7);color:#fff">Romance · Fairytale</div></div>
+        <div class="venue-body"><div class="venue-name">Skyye — UB City</div><div class="venue-area">📍 UB City Rooftop</div><div class="venue-tags"><span class="venue-tag">Rooftop</span><span class="venue-tag">City View</span><span class="venue-tag">Premium</span></div></div>
+      </div>
+      <div class="venue-card reveal">
+        <div class="venue-img" style="background:linear-gradient(135deg,#1a0808,#2d0f0f)">🍷<div class="venue-overlay"></div><div class="venue-plan-tag" style="background:rgba(232,71,106,0.7);color:#fff">Fairytale</div></div>
+        <div class="venue-body"><div class="venue-name">Ebony — ITC Windsor</div><div class="venue-area">📍 Sankey Road</div><div class="venue-tags"><span class="venue-tag">Fine Dining</span><span class="venue-tag">Luxury</span><span class="venue-tag">Private</span></div></div>
+      </div>
+      <div class="venue-card reveal">
+        <div class="venue-img" style="background:linear-gradient(135deg,#0a1218,#0f202d)">🎨<div class="venue-overlay"></div><div class="venue-plan-tag" style="background:rgba(0,229,255,0.6);color:#000">Romance</div></div>
+        <div class="venue-body"><div class="venue-name">The Hammered</div><div class="venue-area">📍 Koramangala</div><div class="venue-tags"><span class="venue-tag">Pottery</span><span class="venue-tag">Activity</span><span class="venue-tag">Creative</span></div></div>
+      </div>
+      <div class="venue-card reveal">
+        <div class="venue-img" style="background:linear-gradient(135deg,#180f0a,#2d1a0f)">☕<div class="venue-overlay"></div><div class="venue-plan-tag" style="background:rgba(201,151,90,0.8);color:#000">Spark</div></div>
+        <div class="venue-body"><div class="venue-name">Third Wave Coffee</div><div class="venue-area">📍 Multiple locations</div><div class="venue-tags"><span class="venue-tag">Coffee</span><span class="venue-tag">Casual</span><span class="venue-tag">Warm</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider" style="margin:0 48px 72px"></div>
+
+  <!-- GIFTS -->
+  <div class="section">
+    <span class="section-label">Curated gifts</span>
+    <h2 class="section-title mb-8"><em>Chosen with</em> intention</h2>
+    <p class="section-sub">Every gift is matched to your partner's personality — not just the occasion.</p>
+    <div class="gifts-grid">
+      <div class="gift-card reveal"><span class="gift-emoji">🌹</span><div class="gift-name">Rose Bouquet</div><div class="gift-plan">Spark+</div></div>
+      <div class="gift-card reveal"><span class="gift-emoji">🍫</span><div class="gift-name">Artisan Chocolates</div><div class="gift-plan">Spark+</div></div>
+      <div class="gift-card reveal"><span class="gift-emoji">🕯️</span><div class="gift-name">Scented Candle Set</div><div class="gift-plan">Romance+</div></div>
+      <div class="gift-card reveal"><span class="gift-emoji">📸</span><div class="gift-name">Polaroid Frame</div><div class="gift-plan">Romance+</div></div>
+      <div class="gift-card reveal"><span class="gift-emoji">💐</span><div class="gift-name">Dried Flower Box</div><div class="gift-plan">Romance+</div></div>
+      <div class="gift-card reveal"><span class="gift-emoji">🧴</span><div class="gift-name">Skincare Hamper</div><div class="gift-plan">Romance+</div></div>
+      <div class="gift-card reveal"><span class="gift-emoji">💍</span><div class="gift-name">Personalised Jewellery</div><div class="gift-plan">Fairytale</div></div>
+      <div class="gift-card reveal"><span class="gift-emoji">🌟</span><div class="gift-name">Name-a-Star Certificate</div><div class="gift-plan">Fairytale</div></div>
+      <div class="gift-card reveal"><span class="gift-emoji">📖</span><div class="gift-name">Custom Memory Book</div><div class="gift-plan">Fairytale</div></div>
+      <div class="gift-card reveal"><span class="gift-emoji">🎀</span><div class="gift-name">Luxury Gift Box</div><div class="gift-plan">Fairytale</div></div>
+    </div>
+  </div>
+
+  <div class="divider" style="margin:0 48px 72px"></div>
+
+  <!-- TIMELINE -->
+  <div class="section">
+    <div class="grid-2" style="gap:60px;align-items:start">
+      <div class="reveal">
+        <span class="section-label">A sample evening</span>
+        <h2 class="section-title">The Romance plan<br><em>hour by hour</em></h2>
+        <p class="section-sub">Here's what your partner experiences when you choose the ₹6,000 Romance package.</p>
+        <a href="book.html?plan=Romance" class="btn btn-primary mt-16">Book the Romance Plan →</a>
+      </div>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">6:00 PM</div><div class="tl-title">The Arrival</div><p class="tl-desc">Your partner arrives to find the table already decorated — roses, fairy lights, and a handwritten card waiting.</p></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">6:15 PM</div><div class="tl-title">Gift Reveal</div><p class="tl-desc">A curated hamper is presented — personalised to their tastes. Their playlist starts playing softly.</p></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">7:00 PM</div><div class="tl-title">Dinner for Two</div><p class="tl-desc">A three-course candlelit dinner. The menu is pre-selected based on their food preferences.</p></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">8:30 PM</div><div class="tl-title">The Activity</div><p class="tl-desc">Pottery, paint & sip, or a sunset walk — chosen based on their personality. Our photographer captures it all.</p></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">9:30 PM</div><div class="tl-title">Dessert & Memories</div><p class="tl-desc">A dessert plate arrives with a special message. 5 printed polaroids handed over on the spot.</p></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">10:00 PM</div><div class="tl-title">The Night Is Yours</div><p class="tl-desc">The plan ends. The moment doesn't. 30 edited photos in your inbox within 48 hours.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider" style="margin:0 48px 72px"></div>
+
+  <!-- FAQ -->
+  <div class="section">
+    <div class="text-center mb-32 reveal">
+      <span class="section-label">Got questions?</span>
+      <h2 class="section-title">Everything you<br><em>need to know</em></h2>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How far in advance should I book?<div class="faq-icon">+</div></div><div class="faq-a">We recommend 3–5 days before the date. For the Fairytale plan, 7–10 days is ideal. Last-minute (under 48 hours) is sometimes possible — WhatsApp us directly.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Do I pay the full amount upfront?<div class="faq-icon">+</div></div><div class="faq-a">We take a 50% advance on confirmation. The remaining 50% is due 24 hours before the date. Full refund if we can't deliver — no questions asked.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can I customise the plan?<div class="faq-icon">+</div></div><div class="faq-a">Absolutely. You can swap the café, add a specific gift, request a particular activity, or modify the timeline. Just mention it in the special notes field.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Does my partner know it's planned by DateCraft?<div class="faq-icon">+</div></div><div class="faq-a">Only if you want them to. We operate completely behind the scenes. Everything looks like you planned it yourself. We'll even coach you on what to say if they ask.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What if my partner doesn't like the venue?<div class="faq-icon">+</div></div><div class="faq-a">You approve the venue before we confirm it. We send 2–3 shortlisted options — you pick one, we book it. Nothing is finalised without your sign-off.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Do you operate outside Bengaluru?<div class="faq-icon">+</div></div><div class="faq-a">Currently Bengaluru-only — Koramangala, Indiranagar, HSR, Whitefield, Jayanagar, and surrounding areas. Mumbai and Pune coming in Q3 2025.</div></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <a href="index.html" class="footer-logo">DateCraft</a>
+    <div class="footer-links">
+      <a href="plans.html">Plans</a><a href="quiz.html">Quiz</a>
+      <a href="venues.html">Venues</a><a href="card-writer.html">Card Writer</a>
+      <a href="book.html">Book Now</a><a href="status.html">Track Booking</a>
+    </div>
+    <div class="footer-copy">© 2025 DateCraft · Made with 💗 in Bengaluru</div>
+  </footer>
+</div>
+
+<a href="https://wa.me/919999999999" target="_blank" class="wa-float">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  <div class="wa-tooltip">Chat with us</div>
+</a>
+
+<script src="shared.js"></script>
+<script>
+function toggleFaq(el){const item=el.parentElement;const isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));if(!isOpen)item.classList.add('open');}
+// Timeline observer
+const tlObs=new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('visible'),i*120);});},{threshold:0.15});
+document.querySelectorAll('.tl-item').forEach(el=>tlObs.observe(el));
+</script>
+</body>
+</html>

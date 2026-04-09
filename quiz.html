@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Date Match Quiz — DateCraft</title>
+<meta name="description" content="Take our 4-question quiz and find the perfect date plan for your partner's personality.">
+<link rel="stylesheet" href="shared.css">
+<style>
+.quiz-wrap { max-width:660px; margin:0 auto; }
+.quiz-card { background:var(--bg2); border:1px solid var(--bdr); border-radius:var(--radius-lg); padding:44px; position:relative; overflow:hidden; }
+.quiz-card::before { content:''; position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--rose),var(--gold2),var(--rose));transform:scaleX(var(--p,0));transform-origin:left;transition:transform 0.5s ease; }
+.quiz-prog { display:flex;align-items:center;gap:14px;margin-bottom:30px; }
+.quiz-bar { flex:1;height:4px;background:var(--bdr);border-radius:4px;overflow:hidden; }
+.quiz-fill { height:100%;background:linear-gradient(90deg,var(--rose),var(--gold2));border-radius:4px;transition:width 0.4s ease; }
+.quiz-lbl { font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);white-space:nowrap; }
+.quiz-ql { font-family:'Dancing Script',cursive;font-size:17px;color:var(--rose2);margin-bottom:9px; }
+.quiz-qt { font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;line-height:1.25;margin-bottom:28px;min-height:65px; }
+.quiz-opts { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+.quiz-opt { padding:15px 18px;border:1px solid var(--bdr);border-radius:14px;background:rgba(255,255,255,0.02);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.22s;text-align:left;display:flex;align-items:center;gap:11px;line-height:1.4; }
+.quiz-opt:hover { border-color:rgba(232,71,106,0.4);background:rgba(232,71,106,0.06);color:var(--txt);transform:translateY(-2px); }
+.quiz-opt.selected { border-color:var(--rose);background:rgba(232,71,106,0.12);color:var(--rose2); }
+.quiz-opt-emoji { font-size:20px;flex-shrink:0; }
+.quiz-result { display:none;text-align:center; }
+.quiz-result.show { display:block; }
+.qr-emoji { font-size:64px;margin-bottom:16px; }
+.qr-label { font-family:'Dancing Script',cursive;font-size:20px;color:var(--rose2);margin-bottom:8px; }
+.qr-plan { font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:700;color:var(--gold2);margin-bottom:14px;text-shadow:var(--glow-gold); }
+.qr-desc { font-size:15px;color:var(--muted);line-height:1.75;max-width:420px;margin:0 auto 28px; }
+.qr-btns { display:flex;gap:12px;justify-content:center;flex-wrap:wrap; }
+@media(max-width:520px){.quiz-opts{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+<nav class="nav">
+  <a class="nav-logo" href="index.html">DateCraft</a>
+  <div class="nav-links">
+    <a class="nav-link" href="index.html">Home</a>
+    <a class="nav-link" href="plans.html">Plans</a>
+    <a class="nav-link" href="quiz.html">Quiz</a>
+    <a class="nav-link" href="venues.html">Venues</a>
+    <a class="nav-link" href="card-writer.html">Card Writer</a>
+    <a class="nav-link" href="book.html">Book Now</a>
+  </div>
+  <a class="nav-cta btn btn-primary" href="book.html">Plan Their Surprise 💌</a>
+  <button class="hamburger" onclick="toggleMobMenu()"><span></span><span></span><span></span></button>
+</nav>
+<div class="mob-menu" id="mobMenu">
+  <button class="mob-close" onclick="closeMobMenu()">×</button>
+  <a href="index.html" onclick="closeMobMenu()">Home</a>
+  <a href="plans.html" onclick="closeMobMenu()">Plans</a>
+  <a href="quiz.html" onclick="closeMobMenu()">Date Quiz</a>
+  <a href="venues.html" onclick="closeMobMenu()">Venues &amp; Gifts</a>
+  <a href="card-writer.html" onclick="closeMobMenu()">Card Writer</a>
+  <a href="book.html" onclick="closeMobMenu()" style="color:var(--rose)">Book Now 💌</a>
+</div>
+<div class="page">
+
+  <div class="page-hero text-center reveal" style="max-width:660px;margin:0 auto">
+    <span class="page-eyebrow">60 seconds · 4 questions</span>
+    <h1 class="page-title">Find your<br><em>perfect plan</em></h1>
+    <p class="page-sub" style="margin:0 auto">Tell us about your partner's personality. We'll tell you exactly which plan fits them best.</p>
+  </div>
+
+  <div class="section" style="padding-top:0">
+    <div class="quiz-wrap reveal">
+      <div class="quiz-card">
+        <!-- INTRO -->
+        <div id="qIntro" style="text-align:center;padding:20px 0">
+          <div style="font-size:60px;margin-bottom:18px">💑</div>
+          <div style="font-family:Cormorant Garamond,serif;font-size:30px;font-weight:600;margin-bottom:12px">Find your perfect plan</div>
+          <p style="font-size:14px;color:var(--muted);line-height:1.7;max-width:360px;margin:0 auto 28px">4 questions about your partner. 60 seconds. One perfect recommendation.</p>
+          <button class="btn btn-primary btn-lg" onclick="startQuiz()">Start the Quiz ✦</button>
+        </div>
+        <!-- QUESTION -->
+        <div id="qQuestion" style="display:none">
+          <div class="quiz-prog"><div class="quiz-bar"><div class="quiz-fill" id="qFill" style="width:0%"></div></div><div class="quiz-lbl" id="qLbl">1 of 4</div></div>
+          <div class="quiz-ql" id="qLabel">Question 1</div>
+          <div class="quiz-qt" id="qText"></div>
+          <div class="quiz-opts" id="qOpts"></div>
+        </div>
+        <!-- RESULT -->
+        <div class="quiz-result" id="qResult">
+          <div class="qr-emoji" id="qrEmoji">🌹</div>
+          <div class="qr-label">Your perfect match is</div>
+          <div class="qr-plan" id="qrPlan">Romance Plan</div>
+          <p class="qr-desc" id="qrDesc"></p>
+          <div class="qr-btns">
+            <button class="btn btn-ghost" onclick="restartQuiz()">↩ Retake</button>
+            <a id="qrBookLink" href="book.html" class="btn btn-primary">Book This Plan 💫</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<footer class="footer">
+  <a href="index.html" class="footer-logo">DateCraft</a>
+  <div class="footer-links">
+    <a href="plans.html">Plans</a>
+    <a href="quiz.html">Quiz</a>
+    <a href="venues.html">Venues</a>
+    <a href="card-writer.html">Card Writer</a>
+    <a href="book.html">Book Now</a>
+    <a href="status.html">Track Booking</a>
+  </div>
+  <div class="footer-copy">© 2025 DateCraft · Made with 💗 in Bengaluru</div>
+</footer>
+</div>
+<a href="https://wa.me/919999999999?text=Hi%20DateCraft!" target="_blank" class="wa-float">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  <div class="wa-tooltip">Chat with us</div>
+</a>
+<script src="shared.js"></script>
+<script>
+const QUIZ=[
+  {q:'When your partner has a free evening, they most want to...',opts:[{e:'🍷',t:'Dress up and go somewhere fancy',s:{Fairytale:2}},{e:'🎨',t:'Try something creative together',s:{Romance:2}},{e:'🛋️',t:'Stay cozy, no big plans',s:{Spark:2}},{e:'🌍',t:'An adventure somewhere new',s:{Fairytale:1,Romance:1}}]},
+  {q:'What would make them happiest to receive as a gift?',opts:[{e:'💍',t:'Something personalised and meaningful',s:{Fairytale:2}},{e:'🌹',t:'Fresh flowers and a handwritten card',s:{Spark:2,Romance:1}},{e:'📸',t:'Photos — memories they can keep',s:{Romance:2}},{e:'✨',t:'A full surprise they didn't see coming',s:{Fairytale:2}}]},
+  {q:'How do they feel about being the centre of attention?',opts:[{e:'👑',t:'They absolutely love it',s:{Fairytale:2}},{e:'😊',t:'Fine if it's just the two of us',s:{Romance:2}},{e:'🙈',t:'Shy — keep it intimate',s:{Spark:2}},{e:'🤔',t:'Depends on their mood',s:{Romance:1,Spark:1}}]},
+  {q:'What's your budget for this date?',opts:[{e:'💸',t:'Around ₹3,000 — cozy and thoughtful',s:{Spark:3}},{e:'💰',t:'₹6,000 — a proper full evening',s:{Romance:3}},{e:'🌟',t:'₹9,000 — nothing but the best',s:{Fairytale:3}},{e:'🤷',t:'Not sure — show me options',s:{Romance:1}}]}
+];
+const RESULTS={
+  Spark:{emoji:'☕',desc:'Your partner sounds like someone who values warmth and intimacy over grand gestures. The Spark Plan was made for them — a private café table, fresh flowers, soft music, and a dessert that says "I was thinking of you."'},
+  Romance:{emoji:'🌹',desc:'Your partner loves a proper experience — good food, something to do together, and photos to remember it by. The Romance Plan covers all of it: a candlelit dinner, a curated activity, gifts, and a photographer.'},
+  Fairytale:{emoji:'✨',desc:"Your partner deserves the works. They'd love a full-day cinematic experience — décor, surprises, the perfect gift, and 80+ photos. The Fairytale Plan turns an evening into a story they'll tell forever."}
+};
+let scores={Spark:0,Romance:0,Fairytale:0},step=0,winner='Romance';
+function startQuiz(){document.getElementById('qIntro').style.display='none';document.getElementById('qQuestion').style.display='block';render();}
+function render(){
+  const q=QUIZ[step];
+  document.getElementById('qLabel').textContent='Question '+(step+1)+' of '+QUIZ.length;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('qFill').style.width=(step/QUIZ.length*100)+'%';
+  document.getElementById('qLbl').textContent=(step+1)+' of '+QUIZ.length;
+  document.getElementById('qOpts').innerHTML=q.opts.map((o,i)=>
+    '<button class="quiz-opt" onclick="answer('+i+')"><span class="quiz-opt-emoji">'+o.e+'</span><span>'+o.t+'</span></button>').join('');
+}
+function answer(i){
+  Object.entries(QUIZ[step].opts[i].s).forEach(([k,v])=>scores[k]+=v);
+  document.querySelectorAll('.quiz-opt')[i].classList.add('selected');
+  setTimeout(()=>{step++;step>=QUIZ.length?showResult():render();},300);
+}
+function showResult(){
+  winner=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+  const r=RESULTS[winner];
+  document.getElementById('qQuestion').style.display='none';
+  document.getElementById('qFill').style.width='100%';
+  document.getElementById('qLbl').textContent='Complete!';
+  document.getElementById('qrEmoji').textContent=r.emoji;
+  document.getElementById('qrPlan').textContent=winner+' Plan';
+  document.getElementById('qrDesc').textContent=r.desc;
+  document.getElementById('qrBookLink').href='book.html?plan='+winner;
+  document.getElementById('qResult').classList.add('show');
+  burstPetals();
+}
+function restartQuiz(){
+  scores={Spark:0,Romance:0,Fairytale:0};step=0;
+  document.getElementById('qResult').classList.remove('show');
+  document.getElementById('qIntro').style.display='block';
+  document.getElementById('qQuestion').style.display='none';
+}
+</script>
+</body>
+</html>
